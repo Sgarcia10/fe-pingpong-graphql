@@ -1,6 +1,6 @@
 import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-
+import { ApolloProvider } from "@apollo/client";
+import client from "../apollo-client";
 import { Auth0Provider } from '@auth0/auth0-react';
 import App from 'next/app';
 
@@ -11,8 +11,11 @@ export default class Root extends App {
       <Auth0Provider
         domain="dev-1icl38ta.us.auth0.com"
         clientId="T8B1lNHUJdIzuZBEeL04uDXxtUTKDyLR"
+        audience="https://xzlwhiopyf.execute-api.us-east-1.amazonaws.com"
         redirectUri={'http://localhost:4000'}>
-          <Component {...pageProps} />
+          <ApolloProvider client={client}>
+            <Component {...pageProps} />
+          </ApolloProvider>
       </Auth0Provider>
     );
   }

@@ -1,13 +1,15 @@
-import { Box, Container, CssBaseline, Fab, Tab, Tabs } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
+import { Container, CssBaseline } from '@mui/material'
 import type { NextPage } from 'next'
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from '../styles/Home.module.css'
-import { AddMatchDialog } from '../components/addMatchDialog';
 import { useAuth0 } from "@auth0/auth0-react";
+import Login from '../components/login';
+import ResponsiveAppBar from '../components/appBar';
+import Board from '../components/board';
 
 const Home: NextPage = () => {
   const [open, setOpen] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   const openDialog = () => {
     setOpen(true);
@@ -17,32 +19,49 @@ const Home: NextPage = () => {
     setOpen(false);
   };
 
-  const { loginWithRedirect } = useAuth0();
+  const { user, isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
 
+  useEffect(() => {
+    const getUserMetadata = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently({
+          audience: 'https://xzlwhiopyf.execute-api.us-east-1.amazonaws.com',
+          grantType: 'client-credentials'
+        });
+        localStorage.setItem('token', accessToken);
+        setIsLoggedIn(true)
+      } catch (e: any) {
+        console.log(e.message);
+      }
+    };
+  
+    getUserMetadata();
+  }, [getAccessTokenSilently, user?.sub]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+    logout({ returnTo: window.location.origin })
+  }
 
   return (
     <React.Fragment>
+      {isAuthenticated && isLoggedIn && 
+        <ResponsiveAppBar handleLogout={handleLogout}/>
+      }
       <CssBaseline />
-      <Container maxWidth="sm">
-        <button onClick={() => loginWithRedirect()}>Log In</button>
-        <h1 className={styles.title}>
+      <Container maxWidth="sm" sx={{display: 'flex', flexDirection: 'column'}}>
+        {isAuthenticated && isLoggedIn &&
+          <Board/>
+        }
+        {!isAuthenticated && 
+          <h1 className={styles.title}>
           Ping Pong 🏓
-        </h1>
-        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          <Tabs value={""} onChange={() => {}} centered>
-            <Tab label="Matches" />
-            <Tab label="Players" />
-          </Tabs>
-          <Fab color="primary" aria-label="add" onClick={openDialog}>
-            <AddIcon/>
-          </Fab>
-        </Box>
+        </h1>}
+        {!isAuthenticated && 
+          <Login/>
+        } 
       </Container>
-      <AddMatchDialog
-        selectedValue={""}
-        open={open}
-        onClose={handleClose}
-      />
     </React.Fragment>
   )
 }
