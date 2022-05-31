@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/.serverless
+/.serverless_nextjs
 /.pnp
 .pnp.js
 
