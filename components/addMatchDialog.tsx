@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Box, Button, Container, Dialog, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import React from "react";
 import { Player } from "../models/player";
-import { getPlayers } from "../queries/players";
+import { GET_PLAYERS } from "../queries/players";
 import AddIcon from '@mui/icons-material/Add';
 import { createMatch } from "../queries/MATCHES";
 
@@ -14,7 +14,7 @@ export interface AddMatchDialogProps {
 
 export function AddMatchDialog(props: AddMatchDialogProps) {
     const { onClose, selectedValue, open } = props;
-    const { data: playersData, loading: loadingPlayers } = useQuery(getPlayers);
+    const { data: playersData, loading: loadingPlayers } = useQuery(GET_PLAYERS);
     const [mutateCreateMatch, { data: matchData, loading: loadingMatch }] = useMutation(createMatch);
 
     const [players, setPlayers] = React.useState<Player[]>([])
@@ -44,7 +44,6 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
 
     const selectPlayer = (ev: SelectChangeEvent, playerNumber: number) => {
       const selectedPlayerId = ev.target.value
-      console.log({selectedPlayerId});
       if (!selectedPlayerId) {
         return
       }
@@ -55,9 +54,6 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
         case 2:
           setPlayer2(selectPlayer)
       }
-
-      console.log({player1, player2});
-      
     }
 
     const filterPlayers = (player: Player, playerNumber: number) => {

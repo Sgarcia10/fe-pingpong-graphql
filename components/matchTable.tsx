@@ -22,7 +22,7 @@ export default function MatchTable({match}: {match: Match}) {
 
   return (
     <TableContainer component={Paper}>
-      <Table size="small" aria-label="a dense table">
+      <Table sx={{ minWidth: '500px'}} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             <TableCell>Player</TableCell>

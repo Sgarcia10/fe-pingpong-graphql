@@ -1,9 +1,11 @@
 import { useQuery } from "@apollo/client";
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Fab, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Match } from "../models/match";
 import { getAllMatches } from "../queries/MATCHES";
+import { AddMatchDialog } from "./addMatchDialog";
 import MatchTable from "./matchTable";
+import AddIcon from '@mui/icons-material/Add';
 
 const bull = (
   <Box
@@ -16,6 +18,7 @@ const bull = (
 
 export default function MatchesList() {
   const { data: matchesData, loading: loadingMatches } = useQuery(getAllMatches);
+  const [open, setOpen] = useState(false);
   const [matches, setMatches] = useState<Match[]>([])
   useEffect(() => {
     if(matchesData) {
@@ -23,9 +26,27 @@ export default function MatchesList() {
     }
   }, [matchesData, loadingMatches])
 
+  const openDialog = () => {
+    setOpen(true);
+  } 
+
+  const handleClose = (value: string) => {
+    setOpen(false);
+  };
+
+
   return (
     matches && 
-    <Box>
+    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+      <Fab
+        key='addMatchButton'
+        color="primary"
+        aria-label="add"
+        onClick={openDialog}
+        sx={{margin: '10px', position: 'fixed', bottom: '0', right: '0'}}
+      >
+        <AddIcon/>
+      </Fab>
       {matches.map((match, i) => {
         return (
           <Card key={`card-${i}`} sx={{ minWidth: 275, marginBottom: '5px'}}>
@@ -35,6 +56,12 @@ export default function MatchesList() {
           </Card>
         )
       })}
+      <AddMatchDialog
+        key='addMatchDialog'
+        selectedValue={""}
+        open={open}
+        onClose={handleClose}
+      />
     </Box>
   )
 }

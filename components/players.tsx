@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import Fab from '@mui/material/Fab';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
@@ -11,9 +12,11 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import { visuallyHidden } from '@mui/utils';
-import { useQuery } from '@apollo/client';
-import { getPlayers } from '../queries/players';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { GET_PLAYERS } from '../queries/players';
 import { Player } from '../models/player';
+import AddIcon from '@mui/icons-material/Add';
+import { AddPlayerDialog } from './addPlayerDialog';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -124,16 +127,16 @@ export default function PlayersTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [players, setPlayers] = React.useState<Player[]>([])
+  const [open, setOpen] = React.useState(false);
 
-  const { data, loading, error } = useQuery(getPlayers);
+  const { data, loading, refetch} = useQuery(GET_PLAYERS);
 
   React.useEffect(() => {
+    console.log({data, loading});
     if(data) {
       setPlayers(data.players)
     }
-  }, [data, loading]);
-
-  
+  }, [data]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -173,6 +176,15 @@ export default function PlayersTable() {
     setPage(0);
   };
 
+  const openDialog = () => {
+    setOpen(true);
+  } 
+
+  const handleClose = () => {
+    refetch()
+    setOpen(false);
+  };
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - players.length) : 0;
@@ -180,6 +192,15 @@ export default function PlayersTable() {
   return (
     players &&
     <Box sx={{ width: '100%' }}>
+      <Fab
+        key='addMatchButton'
+        color="primary"
+        aria-label="add"
+        onClick={openDialog}
+        sx={{margin: '10px', position: 'fixed', bottom: '0', right: '0'}}
+      >
+        <AddIcon/>
+      </Fab>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
           <Table
@@ -196,7 +217,7 @@ export default function PlayersTable() {
             <TableBody>
               {players.slice()
                 .sort(getComparator(order, orderBy))
-                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
@@ -241,6 +262,11 @@ export default function PlayersTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <AddPlayerDialog
+        key='addMatchDialog'
+        open={open}
+        onClose={handleClose}
+      />
     </Box>
   );
 }
