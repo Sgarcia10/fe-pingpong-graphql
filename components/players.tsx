@@ -111,7 +111,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 
 export default function PlayersTable() {
-  const [order, setOrder] = React.useState<Order>('asc');
+  const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof Player>('points');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
@@ -126,6 +126,10 @@ export default function PlayersTable() {
       setPlayers(data.players)
     }
   }, [data]);
+
+  React.useEffect(() => {
+    refetch()
+  }, [])
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,

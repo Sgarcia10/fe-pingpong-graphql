@@ -32,8 +32,6 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
 
     React.useEffect(() => {
       if(errorMatch) {
-        console.log({errorMatch});
-        
       }
       if(matchData) {
         onClose('')

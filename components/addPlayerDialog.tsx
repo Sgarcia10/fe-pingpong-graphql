@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CREATE_PLAYER } from "../queries/players";
 
@@ -11,7 +11,9 @@ export interface AddMatchDialogProps {
 export function AddPlayerDialog(props: AddMatchDialogProps) {
     const { onClose, open } = props;
     const [username, setUsername] = useState('');
-    const [mutateCreatePlayer, { data: playerData, loading: loadingPlayer }] = useMutation(CREATE_PLAYER);
+    const [mutateCreatePlayer, { data: playerData, loading: loadingPlayer, error: errorPlayer }] = useMutation(CREATE_PLAYER, {
+      onError: (err: any) => {}
+    });
 
     useEffect(() => {
         if(playerData) {
@@ -24,8 +26,12 @@ export function AddPlayerDialog(props: AddMatchDialogProps) {
     };
 
     const handleClose = () => {
+      if(!username) {
+        onClose();
+      } else {
         mutateCreatePlayer({variables: {username}})
         setUsername('')
+      }
     };
 
     return (
@@ -42,8 +48,11 @@ export function AddPlayerDialog(props: AddMatchDialogProps) {
             onChange={handleChange}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{flexDirection: 'column'}}>
           <Button onClick={handleClose}>Add Player</Button>
+          { errorPlayer &&
+            <Alert severity="error">{errorPlayer.message}</Alert>
+          }
         </DialogActions>
       </Dialog>
     )
