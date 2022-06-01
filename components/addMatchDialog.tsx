@@ -4,7 +4,7 @@ import React from "react";
 import { Player } from "../models/player";
 import { GET_PLAYERS } from "../queries/players";
 import AddIcon from '@mui/icons-material/Add';
-import { createMatch } from "../queries/MATCHES";
+import { createMatch } from "../queries/matches";
 
 export interface AddMatchDialogProps {
     open: boolean;

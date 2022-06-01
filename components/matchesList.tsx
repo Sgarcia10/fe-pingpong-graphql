@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { Box, Card, CardContent, Fab, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Match } from "../models/match";
-import { getAllMatches } from "../queries/MATCHES";
+import { getAllMatches } from "../queries/matches";
 import { AddMatchDialog } from "./addMatchDialog";
 import MatchTable from "./matchTable";
 import AddIcon from '@mui/icons-material/Add';

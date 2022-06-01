@@ -12,7 +12,7 @@ export default class Root extends App {
         domain="dev-1icl38ta.us.auth0.com"
         clientId="T8B1lNHUJdIzuZBEeL04uDXxtUTKDyLR"
         audience="https://xzlwhiopyf.execute-api.us-east-1.amazonaws.com"
-        redirectUri={'http://localhost:4000'}>
+        redirectUri={'https://dn9rbuednzsao.cloudfront.net'}>
           <ApolloProvider client={client}>
             <Component {...pageProps} />
           </ApolloProvider>

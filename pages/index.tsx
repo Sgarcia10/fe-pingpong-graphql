@@ -8,16 +8,7 @@ import ResponsiveAppBar from '../components/appBar';
 import Board from '../components/board';
 
 const Home: NextPage = () => {
-  const [open, setOpen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-  const openDialog = () => {
-    setOpen(true);
-  } 
-
-  const handleClose = (value: string) => {
-    setOpen(false);
-  };
 
   const { user, isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
 

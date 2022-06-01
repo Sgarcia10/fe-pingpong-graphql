@@ -53,7 +53,7 @@ const headCells: readonly HeadCell[] = [
   {
     id: 'username',
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: 'Username',
   },
   {
@@ -83,16 +83,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -132,7 +122,6 @@ export default function PlayersTable() {
   const { data, loading, refetch} = useQuery(GET_PLAYERS);
 
   React.useEffect(() => {
-    console.log({data, loading});
     if(data) {
       setPlayers(data.players)
     }
@@ -227,15 +216,7 @@ export default function PlayersTable() {
                       tabIndex={-1}
                       key={row.id}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          inputProps={{
-                            'aria-labelledby': labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell align="left" padding="none">{row.username}</TableCell>
+                      <TableCell align="left">{row.username}</TableCell>
                       <TableCell align="right">{row.points}</TableCell>
                     </TableRow>
                   );
