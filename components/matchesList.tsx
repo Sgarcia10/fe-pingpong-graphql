@@ -17,7 +17,7 @@ const bull = (
 );
 
 export default function MatchesList() {
-  const { data: matchesData, loading: loadingMatches } = useQuery(getAllMatches);
+  const { data: matchesData, loading: loadingMatches, refetch } = useQuery(getAllMatches);
   const [open, setOpen] = useState(false);
   const [matches, setMatches] = useState<Match[]>([])
   useEffect(() => {
@@ -31,6 +31,7 @@ export default function MatchesList() {
   } 
 
   const handleClose = (value: string) => {
+    refetch()
     setOpen(false);
   };
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Box, Button, Container, Dialog, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Alert, Box, Button, Container, Dialog, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import React from "react";
 import { Player } from "../models/player";
 import { GET_PLAYERS } from "../queries/players";
@@ -15,7 +15,9 @@ export interface AddMatchDialogProps {
 export function AddMatchDialog(props: AddMatchDialogProps) {
     const { onClose, selectedValue, open } = props;
     const { data: playersData, loading: loadingPlayers } = useQuery(GET_PLAYERS);
-    const [mutateCreateMatch, { data: matchData, loading: loadingMatch }] = useMutation(createMatch);
+    const [mutateCreateMatch, { data: matchData, loading: loadingMatch, error: errorMatch }] = useMutation(createMatch, {
+      onError: (err: any) => {}
+    });
 
     const [players, setPlayers] = React.useState<Player[]>([])
     const [player1, setPlayer1] = React.useState<Player>({} as Player)
@@ -29,6 +31,10 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
     }, [playersData, loadingPlayers]);
 
     React.useEffect(() => {
+      if(errorMatch) {
+        console.log({errorMatch});
+        
+      }
       if(matchData) {
         onClose('')
       }
@@ -70,6 +76,14 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
     const addGame = () => {
       const newGames = [...games]
       newGames.push([0,0])
+      setGames(newGames)
+    }
+
+    const changeGame = (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, player: number, gameNumber: number) => {
+      const newGames = [...games]
+      const points = ev.target.value.replace(/^0+/, '')
+      
+      newGames[gameNumber][player-1] = Number(points ?? 0)
       setGames(newGames)
     }
     
@@ -124,6 +138,8 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
                         size="small"
                         sx={{width: '70px'}}
                         value={game[i-1]}
+                        type="number"
+                        onChange={(ev)=> changeGame(ev, i,j)}
                       />)
                     })}
                   </Container>
@@ -135,6 +151,9 @@ export function AddMatchDialog(props: AddMatchDialogProps) {
             </Fab>
           </Container>
           <Button variant="contained" onClick={addMatch}>ADD MATCH</Button>
+          { errorMatch &&
+            <Alert severity="error">{errorMatch.message}</Alert>
+          }
         </Box>
       </Dialog>
     );
